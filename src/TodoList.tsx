@@ -55,23 +55,79 @@
 //   )
 // }
 
-// export default TodoList
+// export default TodoList"use client";
 import { Box, Button, Typography } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { product } from "./data";
-
 import { useState } from "react";
 import Cart from "./Cart";
 
-export default function TodoList() {
+// ✅ Reusable ProductDetails Component
+function ProductDetails({
+  addedToCart,
+  setAddedToCart,
+}: {
+  addedToCart: boolean;
+  setAddedToCart: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        flexDirection: "column",
+        p: 2,
+        flex: 1,
+        // Make all child text responsive
+        "& *": {
+          fontSize: "clamp(0.8rem, 1.5vw, 1.2rem)",
+        },
+      }}
+    >
+      <Typography color="text.secondary">PERFUME</Typography>
 
-  const [addedToCart, setAddedToCart] = useState(true)
+      <Typography
+        fontWeight="bold"
+        sx={{
+          fontSize: "clamp(1rem, 2vw, 2rem)",
+        }}
+      >
+        {product.name}
+      </Typography>
+
+      <Typography>
+        A floral, solar and voluptuous interpretation composed by olivier
+        polge, perfumer-creator for the house of CHANEL.
+      </Typography>
+
+      <Typography color="green" fontWeight="bold">
+        ${product.price}
+      </Typography>
+
+      <Button
+        onClick={() => setAddedToCart(!addedToCart)}
+        startIcon={<ShoppingCartIcon />}
+        sx={{
+          color: "white",
+          bgcolor: "green",
+          fontWeight: "bold",
+          fontSize: "clamp(0.8rem, 1.2vw, 1rem)",
+          "&:hover": { bgcolor: "darkgreen" },
+        }}
+      >
+        {addedToCart ? "Add To Cart" : "Remove From Cart"}
+      </Button>
+    </Box>
+  );
+}
+
+// ✅ Main Component
+export default function TodoList() {
+  const [addedToCart, setAddedToCart] = useState(true);
 
   return (
-    <div>
-    {addedToCart ? (
-      <Box position="relative">
-      
+    <Box position="relative">
+      {/* Top Right Cart Box */}
       <Box
         position="absolute"
         top="0"
@@ -79,11 +135,17 @@ export default function TodoList() {
         padding="10px"
         sx={{ bgcolor: "white", borderRadius: "1rem" }}
       >
-       <Box>
-        <Typography variant="h5">CART</Typography>
-        <Typography>cart is empty</Typography>
-       </Box>
+        {addedToCart ? (
+          <Box>
+            <Typography variant="h5">CART</Typography>
+            <Typography>Cart is empty</Typography>
+          </Box>
+        ) : (
+          <Cart />
+        )}
       </Box>
+
+      {/* Main Product Container */}
       <Box
         sx={{
           display: "flex",
@@ -95,106 +157,29 @@ export default function TodoList() {
         <Box
           sx={{
             height: "50vh",
-            width: "50vw",
+            width: "80vw",
             bgcolor: "white",
             display: "flex",
-            overflowInline: "auto",
-            borderRadius: "1rem"
+            borderRadius: "1rem",
+            overflow: "hidden",
           }}
         >
-          <Box component="img" src="/pef.jpg" height="100%" width="50%" />
+          {/* Left Image */}
           <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              flexDirection: "column",
-            }}
-          >
-            <Typography>PERFUME</Typography>
-            <Typography variant="h5" fontWeight="bold">
-              {product.name}
-            </Typography>
-            <Typography>
-              A floral, solar and voluptuous interpretation composed by olivier
-              polge, perfumer-creator for the house of CHANEL
-            </Typography>
-            <Typography color="green" fontWeight="bold">
-              ${product.price}
-            </Typography>
-            <Button
-            onClick={() => setAddedToCart(!addedToCart)}
-              startIcon={<ShoppingCartIcon />}
-              sx={{ color: "white", bgcolor: "green", fontWeight: "bold" }}
-            >
-              Add To Cart
-            </Button>
-          </Box>
+            component="img"
+            src="/pef.jpg"
+            height="100%"
+            width="50%"
+            sx={{ objectFit: "cover" }}
+          />
+
+          {/* Right Product Details (Reusable Component) */}
+          <ProductDetails
+            addedToCart={addedToCart}
+            setAddedToCart={setAddedToCart}
+          />
         </Box>
       </Box>
     </Box>
-    ) : (
-      <Box position="relative">
-      
-      <Box
-        position="absolute"
-        top="0"
-        right="0"
-        padding="10px"
-        sx={{ bgcolor: "white", borderRadius: "1rem" }}
-      >
-        <Cart />
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <Box
-          sx={{
-            height: "50vh",
-            width: "50vw",
-            bgcolor: "white",
-            display: "flex",
-            overflowInline: "auto",
-            borderRadius: "1rem"
-          }}
-        >
-          <Box component="img" src="/pef.jpg" height="100%" width="50%" />
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              flexDirection: "column",
-            }}
-          >
-            <Typography>PERFUME</Typography>
-            <Typography variant="h5" fontWeight="bold">
-              {product.name}
-            </Typography>
-            <Typography>
-              A floral, solar and voluptuous interpretation composed by olivier
-              polge, perfumer-creator for the house of CHANEL
-            </Typography>
-            <Typography color="green" fontWeight="bold">
-              ${product.price}
-            </Typography>
-            <Button
-            onClick={() => setAddedToCart(!addedToCart)}
-              startIcon={<ShoppingCartIcon />}
-              sx={{ color: "white", bgcolor: "green", fontWeight: "bold" }}
-            >
-              {addedToCart ? (<Typography>ADD TO CART</Typography>) : (
-                <Typography>REMOVE FROM CART</Typography>
-              )}
-            </Button>
-          </Box>
-        </Box>
-      </Box>
-    </Box>
-    )}
-    </div>
   );
 }
